@@ -3,7 +3,10 @@ SpringBoot app using Spring Cloud Services 3.x (ConfigServer) + CredHub running 
 
 ## Getting started
 
-clone this repository (git clone https://github.com/flopez0303/PCFConfigServerClient.git)
+clone this repository
+```
+git clone https://github.com/flopez0303/PCFConfigServerClient.git
+```
 
 Open a Terminal (e.g., _cmd_ or _bash_ shell)
 
@@ -27,16 +30,17 @@ Within your editor/IDE, review the _MessageController_ class:
 _com.example.spring.configserver.client.demo.PCFConfigServerClient.controller_ underneath _src/main/java_
 
 ```
----------------------------------------------------------------------
 @RefreshScope
 @RestController
 public class MessageController {
 
-
+    // @Value is used to declare/retrieve the attribute from ConfigServer.  Here we are looking for an entry named "message".
+    // If "message" is not found, then the text "DefaultMessageWhenConfigServerIsNotFound" will be displayed
     @Value("${message:DefaultMessageWhenConfigServerIsNotFound}")
     private String configServerMessage;
 
-
+    // @Value is used to declare/retrieve the attribute from ConfigServer also when backed by CredHub.  Here we are looking for an entry
+    // named "mycredhubsecret".  If "mycredhubsecret" is not found, then the text "NoCredHubSecretKeyFound" will be displayed
     @Value("${mycredhubsecret:NoCredHubSecretKeyFound}")
     private String credHubSecret;
 
@@ -54,7 +58,7 @@ public class MessageController {
         return message;
     }
 }
----------------------------------------------------------------------
+
 ```
 
 ## Build the _PCFConfigServerClient_ application
@@ -89,8 +93,8 @@ You should see the application start up an embedded Apache Tomcat server on port
 ```
 
 Browse to http://localhost:8080/message  We should see the default messages from our code since we have not yet configured the Config Server or added any secrets into CredHub.
-+
-image::images/config-scs-defaultmessage.jpg[]
+
+![Image description](images/scs-image1.jpg)
 
 Stop the _PCFConfigServerClient_ application. In the terminal window type *Ctrl + C*
 
@@ -98,16 +102,14 @@ Stop the _PCFConfigServerClient_ application. In the terminal window type *Ctrl 
 ## Create Spring Cloud Config Server instance in PCF
 
 Now that our application is ready to read its config from a Cloud Config server, we need to deploy one!  This can be done through Cloud Foundry using the services Marketplace.  Browse to the Marketplace in Pivotal Cloud Foundry Apps Manager, navigate to the Space you have been using to push your app, and select Config Server:
-+
-image::images/config-scs.jpg[]
+
+![Image description](images/scs-image2.jpg)
 
 In the resulting details page, select the _trial_, single tenant plan.  Name the instance *p-config-server*, select the Space that you've been using to push all your applications.  At this time you don't need to select an application to bind to the service:
-+
-image::images/config-scs1.jpg[]
 
-After we create the service instance you'll be redirected to your _Space_ landing page that lists your apps and services.  The config server is deployed on-demand and will take a few moments to deploy.  Once the messsage _The Service Instance is Initializing_ disappears click on the service you provisioned.  Select the Manage link towards the top of the resulting screen to view the instance id and a JSON document with a single element, count, which validates that the instance provisioned correctly:
-+
-image::images/config-scs2.jpg[]
+![Image description](images/scs-image3.jpg)
+
+After we create the service instance you'll be redirected to your _Space_ landing page that lists your apps and services.  The config server is deployed on-demand and will take a few moments to deploy.  Once the messsage _The Service Instance is Initializing_ disappears click on the service you provisioned.  
 
 We now need to update the service instance with our GIT repository information.
 +
@@ -131,10 +133,6 @@ Using the Cloud Foundry CLI execute the following update service command:
 cf update-service config-server -c config-server.json
 ---------------------------------------------------------------------
 ```
-
-Refresh you Config Server management page and you will see the following message.  Wait until the screen refreshes and the service is reintialized:
-+
-image::images/config-scs3.jpg[]
 
 We will now bind our application to our config-server within our Cloud Foundry deployment manifest.  Review these entries to the bottom of */PCFConfigServerClient/manifest.yml*
 
