@@ -1,0 +1,12 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: pcfconfigserverclient
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
