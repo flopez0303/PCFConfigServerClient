@@ -11,13 +11,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class MessageController {
 
 
+    // @Value is used to declare/retrieve the attribute from ConfigServer.  Here we are looking for an entry named "message".
+    // If "message" is not found, then the text "DefaultMessageWhenConfigServerIsNotFound" will be displayed
     @Value("${message:DefaultMessageWhenConfigServerIsNotFound}")
     private String configServerMessage;
 
-
+    // @Value is used to declare/retrieve the attribute from ConfigServer also when backed by CredHub.  Here we are looking for an entry
+    // named "mycredhubsecret".  If "mycredhubsecret" is not found, then the text "NoCredHubSecretKeyFound" will be displayed
     @Value("${mycredhubsecret:NoCredHubSecretKeyFound}")
     private String credHubSecret;
-
     public MessageController() {
     }
 
